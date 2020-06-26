@@ -15,26 +15,31 @@
 </head>
 
 <body>
-
-    <script>
-        window.onbeforeunload = function() {
-            window.scrollTo(0, 0);
-        }
-    </script>
-    <div class="sidebar">
-        <a href="#home"><i class="fa fa-fw fa-home"></i> Home</a>
-
-        <br>
-        <a href="#Projects"><i class="fa fa-terminal"></i> Projects</a>
-
-        <br>
-        <a href="#Resume"><i class="fa fa-fw fa-user"></i> Resume</a>
-
-        <br>
-        <a href="#About"><i class="fa fa-fw fa-envelope"></i> About Me</a>
-    </div>
-
     <div>
+        <script>
+            window.onbeforeunload = function() {
+                window.scrollTo(0, 0);
+            }
+        </script>
+
+        <div class="row">
+            <div class="cols-md-3">
+                <div class="sidebar">
+                    <a href="#home"><i class="fa fa-fw fa-home"></i> Home</a>
+
+                    <br>
+                    <a href="#Projects"><i class="fa fa-terminal"></i> Projects</a>
+
+                    <br>
+                    <a href="#Resume"><i class="fa fa-fw fa-user"></i> Resume</a>
+
+                    <br>
+                    <a href="#About"><i class="fa fa-fw fa-envelope"></i> About Me</a>
+                </div>
+            </div>
+
+        </div>
+
         <div id="home" class="carousel slide" data-ride="carousel">
 
             <div class="carousel-inner" role="listbox">
@@ -54,20 +59,12 @@
 
             </div>
 
-        </div>
-    </div>
+            <!--About me Section-->
 
-
-
-
-    <!--TESTGHJ-->
-    <!--About me Section-->
-    <div class="row">
-        <div class="col-sm-6">
             <div class="about_me" id="About">
                 <br>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-md-12">
                         <h1><u>About me</u></h1>
                         <h3>My name is Farees Ahmed Siddiqui, I am an aspiring computer scientest who resides in Toronto Ontario.<br>My hobbies include activities such as competitive programming, robotics and web development. I often<br>enjoy competing in
                             robotics tournements to further my knowledge about mechanical engineering and software development.<br>I really enjoy problem solving and wish to pursue a career which would let me do so for the rest of my life. Over the past
@@ -80,17 +77,171 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-sm-1">
+                        <!--Project Cards-->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <!--Project Cards-->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3">
+                        <!--Project Cards-->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        <!--Project Cards-->
+                    </div>
+                </div>
 
             </div>
 
         </div>
-
-        <img src="img/team.jpg" alt="no image" class="about_img">
-
-        <img src="img/me.jpg" alt="no image" class="me_img">
     </div>
+
+    <!-- <div class="row">
+        <div class="cols-sm-12">
+            <img src="img/team.jpg" alt="no image" class="img-responsive" style="width: 15%; height: 30%; position: absolute;left: 1400px;
+            border-radius: 50%;">
+
+            <img src="img/me.jpg" alt="no image" class="img-responsive" style="width: 15%;
+            height: 30%;
+            position: absolute;
+            left: 1050px;
+            top: 1250px;
+            border-radius: 50%;">
+        </div>
+
+    </div> -->
 
 
 </body>
 
 </html>
+
+
+
+
+
+
+<!-- <div class="Projects">
+        <div class="row ">
+            <div class="col-12 col-md-4">
+                <div class="card mb-9">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h2 class="h4 card-title">Card One</h2>
+                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
+                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
+                        <a href="#" class="btn btn-primary">Go Somewhere</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h1><u>Projects</u></h1>
+
+    </div> -->
