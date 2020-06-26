@@ -103,9 +103,9 @@ body {
     color: #f1f1ff;
     position: absolute;
     font-size: 100%;
-    left: 1.6%;
-    top: 1150px;
-    transform: translateX(16%);
+    left: 1.7%;
+    top: 50px;
+    transform: translateX(17%);
 }
 
 .about_me u {
@@ -140,11 +140,12 @@ body {
     transform: translateX(130%);
 }
 
-.row {
+
+/* .row {
     width: 1300px;
     padding-left: 280px;
     transform: translateY(430px);
-}
+} */
 
 .Projects u {
     text-decoration: none;
