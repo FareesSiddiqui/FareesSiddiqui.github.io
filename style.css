@@ -1,47 +1,31 @@
-.carousel-item {
-    height: 70;
-    width: 100%;
-    min-height: 350px;
-    background: no-repeat center center scroll;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-
-img {
-    width: 100%;
+@import url('https://fonts.googleapis.com/css?family=Oswald:400,500,700');
+html,
+body {
     height: 100%;
+    width: 100%;
+    font-family: 'Oswald', sans-serif;
+    background-color: #041938;
 }
 
 html {
     scroll-behavior: smooth;
 }
 
-
-/* gets rid of side scroll*/
-
-.row {
-    margin-left: 0px;
-    margin-right: 0px;
+#navbar {
+    transition: top 0.3s;
 }
-
-hmtl,
-body {
-    height: 100%;
-    width: 100%;
-    color: #222;
-    background-color: #041938;
-}
-
-
-/* #carousel {
-    height: 1080px;
-    margin: 1080px;
-} */
 
 .navbar {
-    padding: .8rem;
+    /* padding: .8rem; */
+    background-color: #0419385b;
+}
+
+.navbar-nav li {
+    padding-right: 20px;
+}
+
+.nav-link {
+    font-size: 1.1em !important;
 }
 
 .carousel-inner img {
@@ -50,123 +34,213 @@ body {
 }
 
 .carousel-caption {
-    font-family: 'Oswald', sans-serrif;
     position: absolute;
     top: 50%;
-    transform: translateY(-40%);
+    transform: rotateY(-50%);
 }
 
 .carousel-caption h1 {
     font-size: 500%;
     text-transform: uppercase;
-    text-shadow: 1px 1px 20px #000;
+    text-shadow: 1px 1px 15px #000;
 }
 
 .carousel-caption h3 {
-    font-size: 200%;
-    text-transform: uppercase;
-    text-shadow: 1px 1px 20px #000;
+    font-size: 300%;
+    font-weight: 500;
+    text-shadow: 1px 1px 10px #000;
+    padding-bottom: 1rem;
 }
 
-.sidebar {
-    font-family: 'Oswald', sans-serrif;
-    height: 1080px;
-    width: 160px;
-    position: fixed;
-    z-index: 1;
+.btn-primary {
+    background-color: #6648b1;
+    border: 1px solid #6648b1;
+}
+
+.btn-primary:hover {
+    background-color: #563d7c;
+    border: 1px solid #563d7c;
+}
+
+.jumbotron {
+    padding: 1rem;
+    border-radius: 0;
+    background-color: #031125;
+}
+
+.padding {
+    padding-bottom: 2rem;
+}
+
+.welcome {
+    width: 75%;
+    margin: 0 auto;
+    padding-top: 2rem;
+}
+
+.welcome hr {
+    border-top: 2px solid #b4b4b4;
+    width: 95%;
+    margin-top: .3rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    color: #ffffff;
+}
+
+h1 {
+    color: #ffffff;
+}
+
+h2 {
+    color: #ffffff;
+}
+
+h3 {
+    color: #ffffff;
+}
+
+.fa-code {
+    color: #e54d26;
+}
+
+.fa-bold {
+    color: #563d7c;
+}
+
+.fa-css3 {
+    color: #2163af;
+}
+
+.fa-code,
+.fa-bold,
+.fa-css3 {
+    font-size: 4em;
+    margin: 1rem;
+}
+
+.social a {
+    font-size: 4.5em;
+    padding: 3rem;
+}
+
+.fa-facebook {
+    color: #3b5998
+}
+
+.fa-twitter {
+    color: #00aced;
+}
+
+.fa-google-plus-g {
+    color: #dd4b39;
+}
+
+.fa-instagram {
+    color: #517fa8;
+}
+
+.fa-facebook:hover,
+.fa-twitter:hover,
+.fa-google-plus-g:hover,
+.fa-instagram:hover {
+    color: #d5d5d5;
+}
+
+footer {
+    background-color: #010422;
+    color: #d5d5d5;
+    padding-top: 2rem;
+}
+
+hr.light {
+    border-top: 1px solid #ffffff;
+    width: 75%;
+    margin-top: .8rem;
+    margin-bottom: 1rem;
+}
+
+
+/*---Media Queries --*/
+
+@media (max-width: 992px) {
+    .social a {
+        font-size: 4em;
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {}
+
+@media (max-width: 576px) {}
+
+
+/*---Firefox Bug Fix --*/
+
+.carousel-item {
+    transition: -webkit-transform 0.5s ease;
+    transition: transform 0.5s ease;
+    transition: transform 0.5s ease, -webkit-transform 0.5s ease;
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+}
+
+
+/*--- Fixed Background Image --*/
+
+figure {
+    position: relative;
+    width: 100%;
+    height: 60%;
+    margin: 0!important;
+}
+
+.fixed-wrap {
+    clip: rect(0, auto, auto, 0);
+    position: absolute;
     top: 0;
     left: 0;
-    background-color: #04193881;
-    overflow-x: hidden;
-    padding-top: 16px;
+    width: 100%;
+    height: 100%;
 }
 
-.sidebar a {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 20px;
-    color: #f1f1f1;
+#fixed {
+    background-image: url('img/mac.png');
+    position: fixed;
     display: block;
-}
-
-.sidebar a:hover {
-    color: #abc6f5;
-}
-
-.main {
-    margin-left: 160px;
-    /* Same as the width of the sidenav */
-    padding: 0px 10px;
-}
-
-.about_me h1 {
-    font-family: 'Courier Prime';
-    color: #f1f1ff;
-    position: absolute;
-    font-size: 200%;
-    left: 120;
-    transform: translateX(130%);
-}
-
-.about_me h3 {
-    font-family: 'Courier Prime';
-    color: #f1f1ff;
-    position: absolute;
-    font-size: 100%;
-    left: 1.8%;
-    top: 50px;
-    transform: translateX(20%);
-}
-
-.about_me u {
-    text-decoration: none;
-    border-bottom: 1px solid;
-}
-
-.about_img {
-    width: 15%;
-    height: 30%;
-    position: absolute;
-    left: 1400px;
-    border-radius: 50%;
-}
-
-.me_img {
-    width: 15%;
-    height: 30%;
-    position: absolute;
-    left: 1050px;
-    top: 1250px;
-    border-radius: 50%;
-}
-
-.Projects h1 {
-    font-family: 'Courier Prime';
-    color: #f1f1ff;
-    position: absolute;
-    font-size: 200%;
-    top: 1600px;
-    left: 30px;
-    transform: translateX(130%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 
-/* .row {
-    width: 1300px;
-    padding-left: 280px;
-    transform: translateY(430px);
-} */
+/*--- Bootstrap Padding Fix --*/
 
-.Projects u {
-    text-decoration: none;
-    border-bottom: 1px solid;
+[class*="col-"] {
+    padding: 1rem;
 }
 
-@media screen and (max-height: 450px) {
-    .sidebar {
-        padding-top: 15px;
-    }
-    .sidebar a {
-        font-size: 18px;
-    }
-}
+
+/*
+Extra small (xs) devices (portrait phones, less than 576px)
+No media query since this is the default in Bootstrap
+
+Small (sm) devices (landscape phones, 576px and up)
+@media (min-width: 576px) { ... }
+
+Medium (md) devices (tablets, 768px and up)
+@media (min-width: 768px) { ... }
+
+Large (lg) devices (desktops, 992px and up)
+@media (min-width: 992px) { ... }
+
+Extra (xl) large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) { ... }
+*/

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Farees Siddiqui</title>
+    <title>Complete Bootstrap 4 Website Layout</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -12,223 +12,290 @@
     <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
     <link href="style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://m.w3newbie.com/you-tube.css">
+    <!--remove after website is done might not be needed ^-->
 </head>
 
 <body>
-    <div>
-        <script>
-            window.onbeforeunload = function() {
-                window.scrollTo(0, 0);
-            }
-        </script>
+    <!--- Image Slider -->
 
-        <div class="row">
-            <div class="cols-md-3">
-                <div class="sidebar">
-                    <a href="#home"><i class="fa fa-fw fa-home"></i> Home</a>
+    <div id="slides" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="img/background.jpg">
 
-                    <br>
-                    <a href="#Projects"><i class="fa fa-terminal"></i> Projects</a>
-
-                    <br>
-                    <a href="#Resume"><i class="fa fa-fw fa-user"></i> Resume</a>
-
-                    <br>
-                    <a href="#About"><i class="fa fa-fw fa-envelope"></i> About Me</a>
+                <div class="carousel-caption">
+                    <h1 class="display-2">Farees' Portfolio</h1>
+                    <h3>Custom made with Bootstrap 4, HTML 5 and CSS 3</h3>
+                    <button type="button" class="btn btn-outline-light bt-lg">Resume</button>
+                    <button type="button" class="btn btn-primary bt-lg">Projects</button>
                 </div>
             </div>
-
         </div>
 
-        <div id="home" class="carousel slide" data-ride="carousel">
+    </div>
 
-            <div class="carousel-inner" role="listbox">
-                <div class="carousel-item active" class="active">
-                    <img src="img/background.jpg" alt="no image">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-light fixed-top" id="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="img/logo.png" style="height: 80px;"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+				<span class="navbar-toggler-icon"></span>
+			  </button>
 
-                    <div class="carousel-caption">
-                        <h1 class="display-2">Farees' Portfolio</h1>
-                        <h3>Custom made with Bootstrap 4, CSS3 and HTML</h3>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#slides">Home</a>
+                    </li>
 
-                        <button type="button" class="btn btn-outline-light btn-lg" id="Projects">View Projects</button>
-                        <button type="button" class="btn btn-primary btn-lg" id="Resume">View Resume</button>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#About">About Me</a>
+                    </li>
 
-                    </div>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#Resume">Resume</a>
+                    </li>
 
-                </div>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#Projects">Projects</a>
+                    </li>
 
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+
+    <script>
+        var prevScrollpos = window.pageYOffset;
+        window.onscroll = function() {
+            var currentScrollPos = window.pageYOffset;
+            if (prevScrollpos > currentScrollPos) {
+                document.getElementById("navbar").style.top = "0";
+            } else {
+                document.getElementById("navbar").style.top = "-110px";
+            }
+            prevScrollpos = currentScrollPos;
+        }
+    </script>
+
+
+    <!--- Jumbotron -->
+
+    <div class="container-fluid">
+        <div class="row jumbotron">
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-10">
+                <p class="lead">This website was hosted for free using github pages. Click the button to learn more</p>
             </div>
 
-            <!--About me Section-->
-
-
-            <!--About me Section-->
-
-            <div class="about_me" id="About">
-                <br>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h1><u>About me</u></h1>
-                        <h3>My name is Farees Ahmed Siddiqui, I am an aspiring computer scientest who resides in Toronto Ontario.<br>My hobbies include activities such as competitive programming, robotics and web development. I often<br>enjoy competing in
-                            robotics tournements to further my knowledge about mechanical engineering and software development.<br>I really enjoy problem solving and wish to pursue a career which would let me do so for the rest of my life. Over the past
-                            4 years<br>I have competed in over 24 robotics tournements as well as 4 provincial championships and 2 world championships alongside my<br>highschools robotics team. I have also won a multitude of awards over my 4 years competing
-                            in the VEX robotics competition.
-                            <br>I also like to stay very avtive, I like to go mountain biking in my local mountain bike trails almost every day.<br>To the right you can see me with my robotics team at the 2019 Ontario provincial championships.<br>This
-                            tournement was a special one, as it was our first time qualifying for the VEX world championships.<br>It was especially special for me, as I had recieved an award for having the best programming at the tournement<br>which consisted
-                            of over 75 teams from all across ontario</h3>
-                        <br>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-1">
-                        <!--Project Cards-->
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-2">
-                        <!--Project Cards-->
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-3">
-                        <!--Project Cards-->
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        <!--Project Cards-->
-                    </div>
-                </div>
-
+            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-2">
+                <a href="https://pages.github.com/"> <button type="button" class="btn btn-outline-secondary btn-lg">Web Hosting</button> </a>
             </div>
 
         </div>
     </div>
 
+
+    <!--- Welcome Section -->
+
+    <div class="container-fluid padding" id="About">
+        <div class="row welcome text-center">
+            <div class="col-12">
+                <h1 class="display-4">Built with ease</h1>
+            </div>
+            <hr>
+
+            <div class="col-12">
+                <p class="lead">Welcome to my Bootstrap 4 website! It was custom made by me to showcase my talents and projects to the world.</p>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!--- Three Column Section -->
+    <div class="container-fluid padding">
+        <div class="row text-center padding">
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <i class="fas fa-code"></i>
+                <h3>HTML5</h3>
+                <p>Built with the latest version of HTML. HTML5.</p>
+            </div>
+
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <i class="fas fa-bold"></i>
+                <h3>BOOTSTRAP</h3>
+                <p>Built with the latest version of Bootstrap. Bootstrap 4.</p>
+            </div>
+
+            <div class="col-sm-12 col-md-4">
+                <i class="fab fa-css3"></i>
+                <h3>CSS3</h3>
+                <p>Built with the latest version of CSS. CSS3.</p>
+            </div>
+
+        </div>
+        <hr class="light" style="width: 100%;">
+    </div>
+
+
+    <!--- Two Column Section -->
+    <div class="container-fluid padding">
+        <div class="row">
+            <div class="col-md-12 col-lg-6">
+                <h2>About me</h2>
+                <p>My name is Farees Ahmed Siddiqui, I am an aspiring computer scientest who resides in Toronto Ontario.</p>
+
+                <p>My hobbies include activities such as competitive programming, robotics and web development. I often enjoy competing in robotics tournements to further my knowledge about mechanical engineering and software development.</p>
+
+                <p>I really enjoy problem solving and wish to pursue a career which would let me do so for the rest of my life. Over the past 4 years I have competed in over 24 robotics tournements as well as 4 provincial championships and 2 world championships
+                    alongside my highschools robotics team.</p>
+
+                <p> I have also won a multitude of awards over my 4 years competing in the VEX robotics competition.</p>
+                <p>I also like to stay very avtive, I like to go mountain biking in my local mountain bike trails almost every day. To the right you can see me with my robotics team at the 2019 Ontario provincial championships.</p>
+                <p>This tournement was a special one, as it was our first time qualifying for the VEX world championships. It was especially special for me, as I had recieved an award for having the best programming at the tournement which consisted of over
+                    75 teams from all across ontario</p>
+                <br>
+                <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+
+            <div class="col-lg-6">
+                <img src="img/team.jpg" style="height: 50%; transform: translate(40%, -5%); border-radius: 50%;" class="img-fluid">
+            </div>
+            <hr class="light" style="width: 100%; transform: translateY(-500px);">
+
+
+        </div>
+
+    </div>
+
+    <!-- <hr class="my-4" style="transform: translateY(-50%);"> -->
+    <!--- Meet the team -->
+    <div class="container-fluid padding">
+        <div class="row welcome text-center">
+            <div class="col-12">
+                <h1 class="display-4" style="transform: translateY(-500px);">Projects</h1>
+            </div>
+            <hr style="transform: translateY(-500px);">
+        </div>
+
+    </div>
+
+
+    <!--- Cards -->
+    <div class="container-fluid padding" style="transform: translateY(-500px);">
+        <div class="row padding">
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="img/temp.png">
+                    <div class="card-body">
+                        <h4 class="card-title">A* Visualization</h4>
+                        <p class="card-text">This is where all the text for th card will go</p>
+                        <a href="#" class="btn btn-outline-secondary">View Demo</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="img/temp.png">
+                    <div class="card-body">
+                        <h4 class="card-title">Gyroscope PID</h4>
+                        <p class="card-text">This is where all the text for th card will go</p>
+                        <a href="#" class="btn btn-outline-secondary">View Demo</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="img/temp.png">
+                    <div class="card-body">
+                        <h4 class="card-title">Sudoku Solver</h4>
+                        <p class="card-text">This is where all the text for th card will go</p>
+                        <a href="#" class="btn btn-outline-secondary">View Demo</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="img/temp.png">
+                    <div class="card-body">
+                        <h4 class="card-title">A* Visualization</h4>
+                        <p class="card-text">This is where all the text for th card will go</p>
+                        <a href="#" class="btn btn-outline-secondary">View Demo</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="img/temp.png">
+                    <div class="card-body">
+                        <h4 class="card-title">Gyroscope PID</h4>
+                        <p class="card-text">This is where all the text for th card will go</p>
+                        <a href="#" class="btn btn-outline-secondary">View Demo</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top" src="img/temp.png">
+                    <div class="card-body">
+                        <h4 class="card-title">Sudoku Solver</h4>
+                        <p class="card-text">This is where all the text for th card will go</p>
+                        <a href="#" class="btn btn-outline-secondary">View Demo</a>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <!--- Connect -->
+    <footer style="transform: translateY(-500px);">
+        <div class="container-fluid padding">
+            <div class="row text-center padding">
+                <div class="col-12">
+                    <h1 style="font-size: 500%;">Connect</h2>
+                </div>
+
+                <div class="container-fluid padding">
+                    <div class=row text-center>
+                        <div class="col-md-12">
+                            <img src="img/w3newbie.png">
+                            <hr class="light">
+                            <p>555-555-5555</p>
+                            <p>example@email.com</p>
+                            <p>100 Street Name</p>
+                            <p>City Province ######</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 social padding">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+
+            </div>
+
+        </div>
+    </footer>
+
+
 </body>
 
 </html>
-
-
-
-
-
-
-<!-- <div class="Projects">
-        <div class="row ">
-            <div class="col-12 col-md-4">
-                <div class="card mb-9">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card mb-4">
-                    <img class="card-img-top" src="img/img_avatar1.png" alt="Card image cap">
-                    <div class="card-body">
-                        <h2 class="h4 card-title">Card One</h2>
-                        <h3 class="h3 card-subtitle mb-3">Subtitle</h3>
-                        <p class="card-text">Some quick example text to build on the card title and<br>make up the bulk of the cards content</p>
-                        <a href="#" class="btn btn-primary">Go Somewhere</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <h1><u>Projects</u></h1>
-
-    </div> -->
