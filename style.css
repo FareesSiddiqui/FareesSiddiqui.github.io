@@ -18,6 +18,10 @@ html {
     scroll-behavior: smooth;
 }
 
+
+/* gets rid of side scroll
+ */
+
 .row {
     margin-left: 0px;
     margin-right: 0px;
