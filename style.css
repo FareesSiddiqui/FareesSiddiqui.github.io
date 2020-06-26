@@ -19,8 +19,7 @@ html {
 }
 
 
-/* gets rid of side scroll
- */
+/* gets rid of side scroll*/
 
 .row {
     margin-left: 0px;
@@ -35,10 +34,11 @@ body {
     background-color: #041938;
 }
 
-#carousel {
+
+/* #carousel {
     height: 1080px;
     margin: 1080px;
-}
+} */
 
 .navbar {
     padding: .8rem;
