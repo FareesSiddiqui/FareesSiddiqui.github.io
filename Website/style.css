@@ -1,0 +1,161 @@
+.carousel-item {
+    height: 70;
+    min-height: 350px;
+    background: no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+hmtl,
+body {
+    height: 100%;
+    width: 100%;
+    color: #222;
+    background-color: #041938;
+}
+
+#carousel {
+    height: 1080px;
+    margin: 1080px;
+}
+
+.navbar {
+    padding: .8rem;
+}
+
+.carousel-inner img {
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-caption {
+    font-family: 'Oswald', sans-serrif;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-40%);
+}
+
+.carousel-caption h1 {
+    font-size: 500%;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 20px #000;
+}
+
+.carousel-caption h3 {
+    font-size: 200%;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 20px #000;
+}
+
+.sidebar {
+    font-family: 'Oswald', sans-serrif;
+    height: 1080px;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #04193881;
+    overflow-x: hidden;
+    padding-top: 16px;
+}
+
+.sidebar a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #f1f1f1;
+    display: block;
+}
+
+.sidebar a:hover {
+    color: #abc6f5;
+}
+
+.main {
+    margin-left: 160px;
+    /* Same as the width of the sidenav */
+    padding: 0px 10px;
+}
+
+.about_me h1 {
+    font-family: 'Courier Prime';
+    color: #f1f1ff;
+    position: absolute;
+    font-size: 200%;
+    left: 120;
+    transform: translateX(130%);
+}
+
+.about_me h3 {
+    font-family: 'Courier Prime';
+    color: #f1f1ff;
+    position: absolute;
+    font-size: 100%;
+    left: 1.6%;
+    top: 1150px;
+    transform: translateX(16%);
+}
+
+.about_me u {
+    text-decoration: none;
+    border-bottom: 1px solid;
+}
+
+.about_img {
+    width: 15%;
+    height: 30%;
+    position: absolute;
+    left: 1400px;
+    border-radius: 50%;
+}
+
+.me_img {
+    width: 15%;
+    height: 30%;
+    position: absolute;
+    left: 1050px;
+    top: 1250px;
+    border-radius: 50%;
+}
+
+.Projects h1 {
+    font-family: 'Courier Prime';
+    color: #f1f1ff;
+    position: absolute;
+    font-size: 200%;
+    top: 1600px;
+    left: 30px;
+    transform: translateX(130%);
+}
+
+.row {
+    width: 1300px;
+    padding-left: 280px;
+    transform: translateY(430px);
+}
+
+.Projects u {
+    text-decoration: none;
+    border-bottom: 1px solid;
+}
+
+@media screen and (max-height: 450px) {
+    .sidebar {
+        padding-top: 15px;
+    }
+    .sidebar a {
+        font-size: 18px;
+    }
+}
