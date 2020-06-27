@@ -13,9 +13,220 @@
     <link href="style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://m.w3newbie.com/you-tube.css">
     <!--remove after website is done might not be needed ^-->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Responsive HTML5 Resume/CV Template for Developers">
+    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">
+    <link rel="shortcut icon" href="favicon.ico">
+    <!-- Google Font -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,400italic,300italic,300,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <!-- FontAwesome JS-->
+    <script defer src="assets/fontawesome/js/all.min.js"></script>
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">
+    <!-- Theme CSS -->
+    <link id="theme-style" rel="stylesheet" href="resume_style.css">
 </head>
 
 <body>
+
+    <!--Resume Modal-->
+    <div id="resumeModal" class="modal">
+        <div class="wrapper modal-content">
+
+            <span class="close">&times;</span>
+            <div class="sidebar-wrapper">
+                <div class="profile-container">
+                    <img class="profile" src="images/profile.png" alt="" />
+                    <h1 class="name">Farees Siddiqui</h1>
+                    <h3 class="tagline">Computer Science Major</h3>
+                </div>
+                <!--//profile-container-->
+
+                <div class="contact-container container-block">
+                    <ul class="list-unstyled contact-list">
+                        <li class="email"><i class="fas fa-envelope"></i><a href="mailto: fareesahmedsiddiqui@gmail.com"> Email</a></li>
+                        <li class="phone"><i class="fas fa-phone"></i><a href="tel:0123 456 789"> 647-554-7513</a></li>
+                        <li class="website"><i class="fas fa-globe"></i><a href="https://fareessiddiqui.github.io/" target="_blank"> Website</a></li>
+                        <li class="linkedin"><i class="fab fa-linkedin-in"></i><a href="https://www.linkedin.com/in/farees-siddiqui-b673621aa/" target="_blank"> Linkedin</a></li>
+                        <li class="github"><i class="fab fa-github"></i>
+                            <a href="https://github.com/FareesSiddiqui" target="_blank"></a> Github</li>
+                    </ul>
+                </div>
+                <!--//contact-container-->
+                <div class="education-container container-block">
+                    <h2 class="container-block-title">Education</h2>
+                    <div class="item">
+                        <h4 class="degree">BSc in Computer Science</h4>
+                        <h5 class="meta">University of Ontario Institute of Technology</h5>
+                        <div class="time">Currently Enrolled</div>
+                    </div>
+
+                </div>
+                <!--//education-container-->
+
+                <div class="languages-container container-block">
+                    <h2 class="container-block-title">Languages</h2>
+                    <ul class="list-unstyled interests-list">
+                        <li>English <span class="lang-desc">(Native)</span></li>
+                        <li>French <span class="lang-desc">(Professional)</span></li>
+                    </ul>
+                </div>
+                <!--//interests-->
+
+                <div class="interests-container container-block">
+                    <h2 class="container-block-title">Interests</h2>
+                    <ul class="list-unstyled interests-list">
+                        <li>Mountain Biking</li>
+                        <li>Snowboarding</li>
+                        <li>Cooking</li>
+                        <li>Robotics</li>
+                        <li>Programming</li>
+                        <li>Web Design</li>
+                    </ul>
+                </div>
+                <!--//interests-->
+
+            </div>
+            <!--//sidebar-wrapper-->
+
+            <div class="main-wrapper">
+
+
+                <section class="section experiences-section">
+                    <h2 class="section-title"><span class="icon-holder"><i class="fas fa-briefcase"></i></span> Experiences</h2>
+
+                    <div class="item">
+                        <div class="meta">
+                            <div class="upper-row">
+                                <h3 class="job-title">Program Instructor</h3>
+                                <div class="time">June 2019 - September 2019</div>
+                            </div>
+                            <!--//upper-row-->
+                            <div class="company">Toronto Robotics Society, Toronto Ontario</div>
+                        </div>
+                        <!--//meta-->
+                        <div class="details">
+                            <p>At the Toronto Robotics Society, I was a program instructor that would teach children between the ages of 12 - 18 how to program robots for the 2019-2020 VEX robotics competition using C++.</p>
+                            <p>During my time Voluteering at the Toronto Robotics Society, I gained an excess of 400 volunteering hours. My responsibilities were to maintain a healthy but competitive learning environment so that students could have fun and
+                                learn at the same time.</p>
+                            <p>I developed a curriculum to aid in the learning process of the students. I taught them everything from basic C++, to advanced control theory such as PID, Odometry and Motion Profiling</p>
+                        </div>
+                        <!--//details-->
+                    </div>
+                    <!--//item-->
+
+                    <div class="item">
+                        <div class="meta">
+                            <div class="upper-row">
+                                <h3 class="job-title">Programming Teacher Volunteer</h3>
+                                <div class="time">September 2016 - June 2019</div>
+                            </div>
+                            <!--//upper-row-->
+                            <div class="company">Leaside High School, Toronto Ontario</div>
+                        </div>
+                        <!--//meta-->
+                        <div class="details">
+                            <p>During my time Voluteering for and competing with the Leaside robotics I had a mutitude of responsibilities. I was awarded the title of Lead Programmer which meant that I would need to organize a team programmers and develop
+                                and execute a plan to develop the required software that would be needed for the competition</p>
+                            <p>During this time I also had the responsibility of teaching the team how to collabrate by using Git and Github. This not only made it easier for us to collaborate over code, but also taught us the importance if version control.</p>
+
+                        </div>
+                        <!--//details-->
+                    </div>
+                    <!--//item-->
+
+                </section>
+                <!--//section-->
+
+                <section class="section projects-section">
+                    <h2 class="section-title"><span class="icon-holder"><i class="fas fa-archive"></i></span> Projects</h2>
+                    <!--//intro-->
+                    <div class="item">
+                        <span class="project-title"><a href="#" target="_blank">Pathfinding Viualization</a></span> - <span class="project-tagline">A Pathfinding visualization that can currently visualize the A* search algorithm. To view a demo of this project scroll down to the 'Projects' section of the website and click on the Pathfinding Visualization.</span>
+
+                    </div>
+                    <!--//item-->
+                    <div class="item">
+                        <span class="project-title"><a href="#" target="_blank">Flappy Bird N.E.A.T</a></span> - <span class="project-tagline">A clone of the classical game Flappy Bird, with a twist. It uses a genetic algorithm to train a machine learning model that plays the game. To view a demo of this project scroll down to the 'Projects' section of the website and click on Flappy Bird.</span>
+                    </div>
+                    <!--//item-->
+                    <div class="item">
+                        <span class="project-title"><a href="#" target="_blank">Gyroscope P.I.D</a></span> -
+                        <span class="project-tagline">An implementation of a P.I.D (Proportional, Integral, Derivative) control loop that can maintain an exact heading of a robot. This project was made for my robotics team and won me the <a href="https://www.robotevents.com/index.php/events/38192/uploads/5194/download" target="_blank">think award</a> at the 2019 vex provincial championships. To view a demo of this project scroll down to the 'Projects' section of the website and click on Gyroscope PID. </span>
+                    </div>
+                    <!--//item-->
+                </section>
+                <!--//section-->
+
+                <section class="skills-section section">
+                    <h2 class="section-title"><span class="icon-holder"><i class="fas fa-rocket"></i></span> Skills &amp; Proficiency</h2>
+                    <div class="skillset">
+                        <div class="item">
+                            <h3 class="level-title">Python</h3>
+
+                        </div>
+                        <!--//item-->
+
+                        <div class="item">
+                            <h3 class="level-title">C/C++</h3>
+
+                        </div>
+                        <!--//item-->
+
+                        <div class="item">
+                            <h3 class="level-title">Java</h3>
+                        </div>
+                        <!--//item-->
+
+                        <div class="item">
+                            <h3 class="level-title">HTML5, CSS3 &amp; Bootstrap</h3>
+                        </div>
+                        <!--//item-->
+
+                        <div class="item">
+                            <h3 class="level-title">Javascript</h3>
+                        </div>
+                        <!--//item-->
+
+                        <div class="item">
+                            <h3 class="level-title">Unix/Linux Environments</h3>
+                        </div>
+                        <!--//item-->
+
+                    </div>
+                </section>
+                <!--//skills-section-->
+
+            </div>
+            <!--//main-body-->
+        </div>
+
+        <footer class="footer">
+            <div class="text-center">
+                <!--/* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */-->
+                <small class="copyright">Designed with <i class="fas fa-heart"></i> by <a href="http://themes.3rdwavemedia.com" target="_blank">Xiaoying Riley</a> for developers</small>
+            </div>
+            <!--//container-->
+        </footer>
+        <!--//footer-->
+
+        <script>
+            var prevScrollpos = window.pageYOffset;
+            window.onscroll = function() {
+                var currentScrollPos = window.pageYOffset;
+                if (prevScrollpos > currentScrollPos) {
+                    document.getElementById("navbar").style.top = "0";
+                } else {
+                    document.getElementById("navbar").style.top = "-110px";
+                }
+                prevScrollpos = currentScrollPos;
+            }
+        </script>
+    </div>
+
     <!--- Image Slider -->
 
     <div id="slides" class="carousel slide" data-ride="carousel">
@@ -26,13 +237,41 @@
                 <div class="carousel-caption">
                     <h1 class="display-2">Farees' Portfolio</h1>
                     <h3>Custom made with Bootstrap 4, HTML 5 and CSS 3</h3>
-                    <button type="button" class="btn btn-outline-light bt-lg">Resume</button>
+                    <button type="button" class="btn btn-outline-light bt-lg" id="resume">Resume</button>
                     <button type="button" class="btn btn-primary bt-lg">Projects</button>
                 </div>
             </div>
         </div>
 
     </div>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById("resumeModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("resume");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-md navbar-light fixed-top" id="navbar">
@@ -50,10 +289,6 @@
 
                     <li class="nav-item active">
                         <a class="nav-link" href="#About">About Me</a>
-                    </li>
-
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#Resume">Resume</a>
                     </li>
 
                     <li class="nav-item active">
@@ -139,7 +374,7 @@
     </div>
 
 
-    <!--- About me section -->
+    <!--- Two Column Section -->
     <div class="container-fluid padding">
         <div class="row">
             <div class="col-md-12 col-lg-6">
@@ -183,10 +418,10 @@
 
 
     <!--- Cards -->
-    <div class="container-fluid padding" style="transform: translateY(-500px);" id="Projects">
+    <div class="container-fluid padding" style="transform: translateY(-500px);">
         <div class="row padding">
             <div class="col-md-4">
-                <div class="card">
+                <div class="card" id="Projects">
                     <img class="card-img-top" src="img/temp.png">
                     <div class="card-body">
                         <h4 class="card-title">A* Visualization</h4>
@@ -263,7 +498,7 @@
     </div>
 
     <!--- Connect -->
-    <footer style="transform: translateY(-500px);">
+    <footer style="transform: translateY(-500px);" class="footer_main">
         <div class="container-fluid padding">
             <div class="row text-center padding">
                 <div class="col-12">
