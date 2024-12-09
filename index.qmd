@@ -10,9 +10,6 @@ format:
     toc: true
     toc-depth: 4
     toc-expand: true
-project:
-  type: website
-  output-dir: docs
 jupyter: python3
 ---
 
@@ -228,3 +225,144 @@ a(s) = argmax_a \ Q_\theta(s,a)
 $$
 
 # Solving CarRacing-v3 using Proximal Policy Optimization (PPO)
+
+What is PPO?
+
+Proximal Policy Optimization (PPO) is a reinforcement learning algorithm that belongs to the family of policy gradient methods, where the agent directly learns a parameterized policy $\pi_\theta(a|s)$ to maximize the cumulative reward in a given environment.
+
+PPO improves upon older policy gradient methods by addressing two key challenges:
+
+1. **Instability in Policy Updates**: Large updates to the policy can lead to suboptimal behavior or even collapse which just means that the agents policy becomes drastically worse or even completely non functional.
+
+2. **Sample Inefficiency**: Many algorithms waste training samples, making learning computationally expensive.
+
+PPO using a **clipped objective function** to limit how the policy can change in a single update, ensuring stability and efficiency. A clipped objective function ensures that the policy does not change too much in a single update. It limits the magnitude of changes in the probability ratio between the new and old policies. This will be discussed more rigorously a little deeper into this article.
+
+## The Math Behind PPO
+
+PPO maximizes the **expected total reward**:
+$$
+J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^tr_t \right]
+$$
+
+where:
+
+- $\tau = (s_0, a_0, r_0, \dots, s_T, a_T, r_T)$ is a trajectory of states, actions, and rewards.
+- $\gamma$ is the discount factor. NOTE: $\gamma \in (0, 1)$
+- $r_t$ is the reward at time $t$
+
+Instead of directly optimizing this, PPO introduces a surrogate objective to stabilize training:
+
+1. **Probability Ratio**:
+
+$$
+r_t(\theta) = \frac{\pi_\theta(a_t | s_t)}{{\pi_\theta}_{old}(a_t|s_t)}
+$$ 
+
+This ratio compares the new policy's probability of choosing action $a_t$ with the old policy's probability
+
+2. **Clipped Objective**: PPO uses a clipped objective loss to constrain the policy update:
+
+$$
+L^{CLIP}(\theta) = \mathbb{E} \left[min(r_t(\theta)A_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon)A_t) \right ]
+$$
+
+where:
+
+- $A_t$ is the **advantage function**, estimating how much better the action a_t was compared to the average
+- $\epsilon$ is a small constant which controls the clipping range
+
+The clipping ensures that policy updates are small, preventing the agent from overfitting to noisy or overly optimistic advantage estimates.
+
+3. **Value Function Loss**: PPO also trains a value function V(s_t) to estimate the expected return from a state:
+$$
+L^{VF}(\theta) = \mathbb{E} \left[(V_\theta(s_t) - R_t)^2 \right ]
+$$
+
+where $R_t$ is the discounted reward
+
+4. $Final Loss$: The combined loss is defined mathematically as:
+
+$$
+L(\theta) = L^{CLIP}(\theta) - c_1L^{VF}(\theta) + c_2\cdot Entropy \ Regularization
+$$
+
+- Entropy Regularization encourages exploration by penalizing overly deterministic policies
+- $c_1$ and $c_2$ are weights
+
+## The CarRacing problem
+
+CarRacing is a popular problem that is a part of the OpenAI Gymnasium for learning reinforcement learning. It is an environment which consists of a race car and randomized tracks, with the goal being to train an agent which can learn to drive the car optimally around all tracks.
+
+To solve this problem we must first model it as a reinforcement learning problem, to do this we need to define it as a Markov Decision process (MDP). This involves specifying the states, actions, rewards, transition states, and the objective. Defining the MDP will guide us towards designing our RL solution. The documentation for the environment can be found [here](https://gymnasium.farama.org/environments/box2d/car_racing/)
+
+-----
+1. **State Space** $(S)$: The state space in CarRacing-v3 (which is the environment we will be working with) consists of visual observations from a top down view of the racetrack
+
+- **Representation**: Each state is an RGB image of size $96 \times 96 \times 3$, showing the car's position relative to the racetrack. 
+- **Example State** : A snapshot of the track where the car's position, road layout, and off road areas are visible
+- **Challenges**: 
+  - The state space is high dimensional (image based), requiring a convolutional neural network (CNN) for feature extraction
+  - Temporal dependancies must be captured. For example, how the car's position changes over time
+
+
+2. **Action Space** $(A)$: The action space for this environment is continuous and consists of three control variables
+
+	1. **Steering** (a_1):
+		- Controls the car's direction
+		- Has a range of $[-1, 1]$ where $-1$ is a full left turn, $1$ is a full right turn, and $0$ means no steering
+
+	2. **Acceleration** $(s_2)$:
+		- Controls the car's acceleration (gas pedal)
+		- Has a range of $[0, 1]$, where $0$ means no acceleration and $1$ is maximum acceleration
+
+	3. **Brake** $(a_3)$:
+		- Controls the car's brakes
+		- Has a range of $[0, 1]$ where $0$ means no brake pressure and $1$ means full brake preassure 
+
+	- **Action Format**: The action at each time step is a vector: $[a_1, a_2, a_3]$
+	- **Challenges**
+		- Continuous control demands precise adjustments of the action vector
+		- Balancing steering, acceleration, and braking is non trivial, especially around sharp curves and tight corners (as we will see later)
+
+3. **Reward Function** $(R)$: The reward function incentivizes the agent to drive efficiently while also trying to stay on the track.
+
+	- **Positive Rewards**:
+		- The agent earns rewards proportional to its progress along the track.
+		- Staying on the track while also progressing towards the finish lines yields the highest rewards.
+
+	- **Negative Rewards**: 
+		- Penalties are applied the car goes off the road. The agent is also penalized with a reward of -0.1 every frame to encourage it to do something and explore the environment
+		- Episodes terminate early if the car stays off of the road for too long, resulting in a large negative reward and causing the episode to end.
+
+4. **Transition Dynamics** $(P)$: The transitions are deterministic and governed by the physics engine of the environment
+
+	- Given a state $(s_t)$ and action $(a_t)$,the environment computes the next state $(s_{t+1})$ based on;
+		- The car's velocity, orientation, and position
+		- Physical forces acting on the car such as collisions
+
+	- **Modeling Assumptions**: The agent must implicitly learn these dynamics through trial and error as they are not explicitly provided to the agent
+
+5. **Discount Factor**: $(\gamma)$
+
+The discount factor determines how much importance is placed on future rewards compared to immediate ones
+
+- **Typical Value**: $\gamma = 0.99$
+- This encourages the agent to focus on long term strategies such as planning ahead for sharp turns while still valuing immediate progress. This is just another hyperparameter that we can tune and the value for the discount factor ranges between $(0, 1)$
+
+
+6. **Objective**
+The agents objective is to learn a policy $\pi_\theta(a|s)$ that maximizes the **expected total discounted return** over an episode:
+$$
+J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^tr_t \right]
+$$
+
+where:
+
+- $\tau = (s_0, a_0, r_0, \dots, s_T, a_T, r_T)$ is a trajectory of states, actions, and rewards.
+- $T$ is the length of an episode
+
+This requires the agent to:
+
+1. Learn to stay on track and complete laps efficiently
+2. Maximize forward movement while minimizing penalties for off road driving or unnecessary braking
