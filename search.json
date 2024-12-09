@@ -1,0 +1,65 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "",
+    "text": "I will start this article off with a little bit of mathematical background about Reinforcement Learning and how it works, so that readers have a strong base of knowledge and are able to understand some of the algorithms and methods at work.\nBelow is the layout of this article:\n\nWhat is Reinforcement Learning (RL)\nKey Terminology\n\nPolicies\nTrajectories\nRewards and Return\nThe formulation of an RL problem\nValue Functions\nBellman Equations and the Advantage Function\nPolicy Optimization\nQ Learning\n\nSolving CarRacing-v3 using Proximal Policy Optimization (PPO)\n\nReinforcement Learning (RL) is a machine learning paradigm inspired by how humans and animals learn through interactions with their environment. The core idea is that an agent learns to make decisions by interacting with an environment, aiming to maximize long term cumulative rewards.\nThe environment is the world that the agent lives in and interacts with. At every step of interaction, the agent sees an observation of the state of the world (or environment), and then decides which action to take. The environment changes when the agent acts on it, but it may also change on its own.\nThe agent also perceives a reward from the environment. The reward is a number that tells the agent how good or bad the current world state is. The goal of the agent is to maximize its cumulative reward. This cumulative reward is known as the return. Reinforcement Learning methods are ways that the agent can learn behaviours to achieve its goal and maximize long term return\nReinforcement Learning is built around the agent environment loop, as shown in the diagram below:\n\n\n\nAgent Environment Paradigm"
+  },
+  {
+    "objectID": "index.html#policies",
+    "href": "index.html#policies",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "Policies",
+    "text": "Policies\nPolicy \\((\\pi)\\): A policy is a rule used by an agent to decide what actions to take. It can be deterministic, in which case it’s usually denoted by \\(\\mu\\):\n\\[\na_t = \\mu(s_t)\n\\]\nor it may be stochastic, in which case it is usually denoted by \\(\\pi\\):\n\\[\na_t \\sim \\pi(\\cdot | s_t)\n\\]\n\\(a_t \\sim \\pi\\) means that \\(a\\) is sampled from \\(\\pi\\), since \\(\\pi\\) is a distribution.\nIn deep RL, we deal with parameterized policies which are policies whose outputs are computable functions that depend on a set of parameters (such as the weights and biases of a neural network) which we can adjust to change the behavior via some optimization algorithm. Oftentimes the parameters of such a policy are denoted by \\(\\theta\\) or \\(\\phi\\), and are written as follow\n\\[\na_t = \\mu_\\theta(s_t) \\ (deterministic \\ policy)\n\\] \\[\na_t \\sim \\pi_\\theta(s_t) \\ (stochastic \\ policy)\n\\]"
+  },
+  {
+    "objectID": "index.html#trajectories",
+    "href": "index.html#trajectories",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "Trajectories",
+    "text": "Trajectories\nA trajectory \\(\\tau\\) is a sequence of states and actions in the world\n\\[\n\\tau = (s_0, a_0, s_1, a_1, \\dots)\n\\]\nThe first state of the world, \\(s_0\\) is randomly sampled from the start state distribution, which is sometimes denoted by \\(\\rho_0\\)\n\\[\ns_0 \\sim \\rho_0(\\cdot)\n\\]\nState transitions (what happens to the world between the state \\(s_t\\) at time \\(t\\), and the state \\(s_{t+1}\\) at time \\(t+1\\)) are governed by the natural laws of the environment, and depend only on the most recent action \\(a_t\\). These can also be either deterministic\n\\[\ns_{t+1} = f(s_t, a_t)\n\\]\nor stochastic\n\\[\ns_{t+1} \\sim P(\\cdot | s_t, a_t)\n\\]"
+  },
+  {
+    "objectID": "index.html#rewards-and-return",
+    "href": "index.html#rewards-and-return",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "Rewards and Return",
+    "text": "Rewards and Return\nThe reward function \\(R\\) is a crucial tool in RL. It depends on the current state of the world, the most recent action that was taken, and the next state of the world/environment:\n\\[\nr_t = R(s_t, a_t, s_t+1)\n\\]\nAlthough most of the time this is simplified to just a dependance on the current state, \\(r_t = R(s_t)\\) or state action pair \\(r_t = R(s_t, a_t)\\). Moving forward, I will refer to the return of a trajectory as \\(R(\\tau)\\)\nThere are 2 main kinds of return. The first is the finite-horizon undiscounted return which is just the sum of rewards obtained in a fixed window of steps\n\\[\nR(\\tau) = \\sum_{t=0}^{T} r_t\n\\]\nThe second kind of return is the infinite-horizon undiscounted return which is the sum of all rewards ever obtained by the agent but discounted by how far in the future they are obtained. This forumalation ofthe reward function includes a discount factor \\(\\gamma \\in (0,1)\\):\n\\[\nR(\\tau) = \\sum_{t=0}^{\\infty} \\gamma^t r_t\n\\]\nSome people may think, why do we have the discount factor? do we not want to maximize all rewards? Intuitively, immediate rewards are more valuable that ones that are in the distant future, similar to the notion of money today is better than money later. Mathematically an infinite horizon sum of rewards may not converge to a finite value, and is hard to deal with in equations and hence in code. But with a discount factor under resonable conditions, the infinite sum converges."
+  },
+  {
+    "objectID": "index.html#the-rl-problem",
+    "href": "index.html#the-rl-problem",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "The RL Problem",
+    "text": "The RL Problem\nWhichever return measure we use (finite or infinite horizon) and whichever policy we choose, the goal in RL is to select a policy which maximized the expected return when the agent acts according to it. To talk about expectedd return, we first need to talk about probability distributions over trajectories.\nLets suppose that both the environment transitions and the policy are stochastic. In this case, the probability of a \\(T\\) step trajectory is:\n\\[\nP(\\tau|\\pi) = \\rho_0(s_0)\\prod_{t=0}^{T-1} P(s_{t+1}|s_t, a_t)\\pi(a_t|s_t)\n\\]\nThe expected return (for whichever return function) denoted by \\(J(\\pi)\\) is then:\n\\[\nJ(\\pi) = \\int_{\\tau} P(\\tau|\\pi)R(\\tau) = \\mathbb{E}_{\\tau \\sim \\pi} \\left[ R(\\tau) \\right]\n\\]\nThe main optimization problem in RL can then be expressed as\n\\[\n\\pi^{*} = argmax_\\pi \\ J(\\pi)\n\\]\nWhere \\(\\pi^*\\) is the optimal policy"
+  },
+  {
+    "objectID": "index.html#value-functions",
+    "href": "index.html#value-functions",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "Value Functions",
+    "text": "Value Functions\nFinally I will introduce the notion of value functions and then proceed to talk about a technique known as Q learning.\nOftentimes we want to know the value of a state, or state action pair. The value in this context means the expected return if you start in taht state or state action pair, and then act according to a particular policy.\nThere are 4 main functions of importance here\n\nThe On-Policy Value Function, \\(V^\\pi(s)\\), which gives the expected return if you start in state \\(s\\) and always act according to policy \\(\\pi\\):\n\n\\[\nV^\\pi(s) = \\mathbb{E}_{\\tau \\sim \\pi} \\left[ R(\\tau) | s_0 = s\\right]\n\\]\n\nThe On-Policy Action-Value Function, \\(Q^\\pi(s, a)\\), which gives us the expected return if we start at state \\(s\\) and take action \\(a\\) then follow the policy \\(\\pi\\) indefinitely. The inital action \\(a\\) does not necessarily need to come from the policy\n\n\\[\nQ^\\pi(s, a) = \\mathbb{E}_{\\tau \\sim \\pi} \\left[ R(\\tau) | s_0 = s, a_0 = a\\right]\n\\]\n\nThe Optimal Value Function, \\(V^*(s)\\) which gives the expected return if you start at state \\(s\\) then always act according to the optimal policy\n\n\\[\nV^*(s) = max_\\pi\\mathbb{E}_{\\tau \\sim \\pi} \\left[ R(\\tau) | s_0 = s\\right]\n\\]\n\nThe Optimal Action Value Function, \\(Q^*(s, a)\\) which gives the expected return if we start at state \\(s\\) and take action \\(a\\) then always act according to the optimal policy\n\n\\[\nQ^*(s, a) = max_\\pi\\mathbb{E}_{\\tau \\sim \\pi} \\left[ R(\\tau) | s_0 = s, a_0 = a\\right]\n\\]"
+  },
+  {
+    "objectID": "index.html#bellman-equations",
+    "href": "index.html#bellman-equations",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "Bellman Equations",
+    "text": "Bellman Equations\nOne of the most important concepts in reinforcement learning (RL) is the Bellman Equations. These equations form the mathematical backbone of RL by describing how the value of a state or action depends on the reward received and the values of subsequent states. In short the basic idea behind the bellman equations is this: *The value of being in a state is the reward you expect to get from being there, plus the value of where you end up next.\nThis concept is crucial because it allows us to break down the problem of finding the best actions over an entire sequence of decisions into smaller, easier to solve pieces.\nThe Bellman equations for the on-policy value functions are\n\\[\nV^\\pi(s) = \\mathbb{E}_{a \\sim \\pi, s' \\sim P} \\left[ r(s, a) + \\gamma V^\\pi(s') \\right]\n\\] \\[\nQ^\\pi(s, a) = \\mathbb{E}_{s' \\sim P} \\left[ r(s, a) + \\gamma \\ \\mathbb{E}_{a' \\sim \\pi} \\left[ Q^\\pi(s', a') \\right] \\right]\n\\]\nwhere \\(s' \\sim P\\) is shorthand for \\(s' \\sim P(\\cdot | s, a)\\), indicating that the next state \\(s'\\) is sampled from the environment’s transition rules. Similarly, \\(a \\sim \\pi\\) is shorthand for \\(s \\sim \\pi(\\cdot | s)\\) and \\(a' \\sim \\pi\\) is shorthand for \\(a' \\sim \\pi(\\cdot | s')\\)\nThe bellman equations for the optimal value functions are:\n\\[\nV^*(s) = max_a \\ \\mathbb{E}_{s' \\sim P} \\left[ r(s, a) + \\gamma V^*(s') \\right]\n\\]\n\\[\nQ^* = \\mathbb{E}_{s' \\sim P} \\left[ r(s, a) + \\gamma \\ max_{a'} \\ Q^*(s',a') \\right]\n\\]\n\nAdvantage Function\nSometimes in RL we need to describe how good an action is relative to the others and not in an absolute sense. This means that we want to know the relative advantage of that action. The advantage function \\(A^\\pi(s,a)\\) corresponsing to a policy \\(\\pi\\) describes how much better it is to take a specific action \\(a\\) in state \\(s\\), over randomly selecting an action according to \\(\\pi(\\cdot|s)\\). Mathematically the advantage function is defined as:\n\\[\nA^\\pi(s,a) = Q^\\pi(s,a) - V^\\pi(s)\n\\]"
+  },
+  {
+    "objectID": "index.html#policy-optimization",
+    "href": "index.html#policy-optimization",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "Policy Optimization",
+    "text": "Policy Optimization\nPolicy optimization is a family of methods that try to explicitly represent a policy \\(\\pi_\\theta(a|s)\\). They optimize the parameters \\(\\theta\\) either directly by using gradient ascent on the performance objective \\(J(\\pi_\\theta)\\), or indirectly by maximizing local optimizations of \\(J(\\pi_\\theta)\\). This optimization is almost always performed on-policy, which means that each update only uses data collected while acting according to the most recent version of the policy. Policy optimization also usually involves learning an approximator \\(V_\\phi(s)\\) for the on-policy value function \\(V^\\pi(s)\\), which is used to figure out how to update the policy via its parameters."
+  },
+  {
+    "objectID": "index.html#q-learning",
+    "href": "index.html#q-learning",
+    "title": "An Introduction to Reinforcement Learning with Practical Examples",
+    "section": "Q Learning",
+    "text": "Q Learning\nQ-Learning is a family of methods that try to learn an approximator \\(Q_\\theta(s,a)\\) for the optimal action-value function \\(Q*(s,a)\\). Typically they use an objective function based on the Bellman Equations. This optimization is almost always performed off-policy, which means that each update can use data collected at any point during training, regardless of how the agent was choosing to explore the environment when the data was obtained. The corresponding policy is obtained via the connection between \\(Q^*\\) and \\(\\pi^*\\): the actions taken by the Q-Learning agent are given by\n\\[\na(s) = argmax_a \\ Q_\\theta(s,a)\n\\]"
+  }
+]
