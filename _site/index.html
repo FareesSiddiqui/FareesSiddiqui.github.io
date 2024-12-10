@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -126,7 +160,12 @@ window.Quarto = {
   <li><a href="#policy-optimization" id="toc-policy-optimization" class="nav-link" data-scroll-target="#policy-optimization">Policy Optimization</a></li>
   <li><a href="#q-learning" id="toc-q-learning" class="nav-link" data-scroll-target="#q-learning">Q Learning</a></li>
   </ul></li>
-  <li><a href="#solving-carracing-v3-using-proximal-policy-optimization-ppo" id="toc-solving-carracing-v3-using-proximal-policy-optimization-ppo" class="nav-link" data-scroll-target="#solving-carracing-v3-using-proximal-policy-optimization-ppo">Solving CarRacing-v3 using Proximal Policy Optimization (PPO)</a></li>
+  <li><a href="#solving-carracing-v3-using-proximal-policy-optimization-ppo" id="toc-solving-carracing-v3-using-proximal-policy-optimization-ppo" class="nav-link" data-scroll-target="#solving-carracing-v3-using-proximal-policy-optimization-ppo">Solving CarRacing-v3 using Proximal Policy Optimization (PPO)</a>
+  <ul>
+  <li><a href="#the-math-behind-ppo" id="toc-the-math-behind-ppo" class="nav-link" data-scroll-target="#the-math-behind-ppo">The Math Behind PPO</a></li>
+  <li><a href="#the-carracing-problem" id="toc-the-carracing-problem" class="nav-link" data-scroll-target="#the-carracing-problem">The CarRacing problem</a></li>
+  <li><a href="#implementing-the-solution-for-carracing" id="toc-implementing-the-solution-for-carracing" class="nav-link" data-scroll-target="#implementing-the-solution-for-carracing">Implementing the Solution for CarRacing</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -326,12 +365,240 @@ A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s)
 <p><span class="math display">\[
 a(s) = argmax_a \ Q_\theta(s,a)
 \]</span></p>
+<hr>
 </section>
 </section>
 <section id="solving-carracing-v3-using-proximal-policy-optimization-ppo" class="level1">
 <h1>Solving CarRacing-v3 using Proximal Policy Optimization (PPO)</h1>
+<p>What is PPO?</p>
+<p>Proximal Policy Optimization (PPO) is a reinforcement learning algorithm that belongs to the family of policy gradient methods, where the agent directly learns a parameterized policy <span class="math inline">\(\pi_\theta(a|s)\)</span> to maximize the cumulative reward in a given environment. The policy is usually parameterized via a nerual network.</p>
+<p>PPO improves upon older policy gradient methods by addressing two key challenges:</p>
+<ol type="1">
+<li><p><strong>Instability in Policy Updates</strong>: Large updates to the policy can lead to suboptimal behavior or even collapse which just means that the agents policy becomes drastically worse or even completely non functional.</p></li>
+<li><p><strong>Sample Inefficiency</strong>: Many algorithms waste training samples, making learning computationally expensive.</p></li>
+</ol>
+<p>PPO using a <strong>clipped objective function</strong> to limit how the policy can change in a single update, ensuring stability and efficiency. A clipped objective function ensures that the policy does not change too much in a single update. It limits the magnitude of changes in the probability ratio between the new and old policies. This will be discussed more rigorously a little deeper into this article.</p>
+<section id="the-math-behind-ppo" class="level2">
+<h2 class="anchored" data-anchor-id="the-math-behind-ppo">The Math Behind PPO</h2>
+<p>PPO maximizes the <strong>expected total reward</strong>: <span class="math display">\[
+J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^tr_t \right]
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\tau = (s_0, a_0, r_0, \dots, s_T, a_T, r_T)\)</span> is a trajectory of states, actions, and rewards.</li>
+<li><span class="math inline">\(\gamma\)</span> is the discount factor. NOTE: <span class="math inline">\(\gamma \in (0, 1)\)</span></li>
+<li><span class="math inline">\(r_t\)</span> is the reward at time <span class="math inline">\(t\)</span></li>
+</ul>
+<p>Instead of directly optimizing this, PPO introduces a surrogate objective to stabilize training:</p>
+<ol type="1">
+<li><strong>Probability Ratio</strong>:</li>
+</ol>
+<p><span class="math display">\[
+r_t(\theta) = \frac{\pi_\theta(a_t | s_t)}{{\pi_\theta}_{old}(a_t|s_t)}
+\]</span></p>
+<p>This ratio compares the new policy’s probability of choosing action <span class="math inline">\(a_t\)</span> with the old policy’s probability</p>
+<ol start="2" type="1">
+<li><strong>Clipped Objective</strong>: PPO uses a clipped objective loss to constrain the policy update:</li>
+</ol>
+<p><span class="math display">\[
+L^{CLIP}(\theta) = \mathbb{E} \left[min(r_t(\theta)A_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon)A_t) \right ]
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(A_t\)</span> is the <strong>advantage function</strong>, estimating how much better the action a_t was compared to the average</li>
+<li><span class="math inline">\(\epsilon\)</span> is a small constant which controls the clipping range</li>
+</ul>
+<p>The clipping ensures that policy updates are small, preventing the agent from overfitting to noisy or overly optimistic advantage estimates.</p>
+<ol start="3" type="1">
+<li><strong>Value Function Loss</strong>: PPO also trains a value function V(s_t) to estimate the expected return from a state: <span class="math display">\[
+L^{VF}(\theta) = \mathbb{E} \left[(V_\theta(s_t) - R_t)^2 \right ]
+\]</span></li>
+</ol>
+<p>where <span class="math inline">\(R_t\)</span> is the discounted reward</p>
+<ol start="4" type="1">
+<li><span class="math inline">\(Final Loss\)</span>: The combined loss is defined mathematically as:</li>
+</ol>
+<p><span class="math display">\[
+L(\theta) = L^{CLIP}(\theta) - c_1L^{VF}(\theta) + c_2\cdot Entropy \ Regularization
+\]</span></p>
+<ul>
+<li>Entropy Regularization encourages exploration by penalizing overly deterministic policies</li>
+<li><span class="math inline">\(c_1\)</span> and <span class="math inline">\(c_2\)</span> are weights</li>
+</ul>
+</section>
+<section id="the-carracing-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-carracing-problem">The CarRacing problem</h2>
+<p>CarRacing is a popular problem that is a part of the OpenAI Gymnasium for learning reinforcement learning. It is an environment which consists of a race car and randomized tracks, with the goal being to train an agent which can learn to drive the car optimally around all tracks.</p>
+<p>To solve this problem we must first model it as a reinforcement learning problem, to do this we need to define it as a Markov Decision process (MDP). This involves specifying the states, actions, rewards, transition states, and the objective. Defining the MDP will guide us towards designing our RL solution. The documentation for the environment can be found <a href="https://gymnasium.farama.org/environments/box2d/car_racing/">here</a></p>
+<hr>
+<ol type="1">
+<li><strong>State Space</strong> <span class="math inline">\((S)\)</span>: The state space in CarRacing-v3 (which is the environment we will be working with) consists of visual observations from a top down view of the racetrack</li>
+</ol>
+<ul>
+<li><strong>Representation</strong>: Each state is an RGB image of size <span class="math inline">\(96 \times 96 \times 3\)</span>, showing the car’s position relative to the racetrack.</li>
+<li><strong>Example State</strong> : A snapshot of the track where the car’s position, road layout, and off road areas are visible</li>
+<li><strong>Challenges</strong>:
+<ul>
+<li>The state space is high dimensional (image based), requiring a convolutional neural network (CNN) for feature extraction</li>
+<li>Temporal dependancies must be captured. For example, how the car’s position changes over time</li>
+</ul></li>
+</ul>
+<ol start="2" type="1">
+<li><p><strong>Action Space</strong> <span class="math inline">\((A)\)</span>: The action space for this environment is continuous and consists of three control variables</p>
+<ol type="1">
+<li><strong>Steering</strong> (a_1):
+<ul>
+<li>Controls the car’s direction</li>
+<li>Has a range of <span class="math inline">\([-1, 1]\)</span> where <span class="math inline">\(-1\)</span> is a full left turn, <span class="math inline">\(1\)</span> is a full right turn, and <span class="math inline">\(0\)</span> means no steering</li>
+</ul></li>
+<li><strong>Acceleration</strong> <span class="math inline">\((s_2)\)</span>:
+<ul>
+<li>Controls the car’s acceleration (gas pedal)</li>
+<li>Has a range of <span class="math inline">\([0, 1]\)</span>, where <span class="math inline">\(0\)</span> means no acceleration and <span class="math inline">\(1\)</span> is maximum acceleration</li>
+</ul></li>
+<li><strong>Brake</strong> <span class="math inline">\((a_3)\)</span>:
+<ul>
+<li>Controls the car’s brakes</li>
+<li>Has a range of <span class="math inline">\([0, 1]\)</span> where <span class="math inline">\(0\)</span> means no brake pressure and <span class="math inline">\(1\)</span> means full brake preassure</li>
+</ul></li>
+</ol>
+<ul>
+<li><strong>Action Format</strong>: The action at each time step is a vector: <span class="math inline">\([a_1, a_2, a_3]\)</span></li>
+<li><strong>Challenges</strong>
+<ul>
+<li>Continuous control demands precise adjustments of the action vector</li>
+<li>Balancing steering, acceleration, and braking is non trivial, especially around sharp curves and tight corners (as we will see later)</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Reward Function</strong> <span class="math inline">\((R)\)</span>: The reward function incentivizes the agent to drive efficiently while also trying to stay on the track.</p>
+<ul>
+<li><strong>Positive Rewards</strong>:
+<ul>
+<li>The agent earns rewards proportional to its progress along the track.</li>
+<li>Staying on the track while also progressing towards the finish lines yields the highest rewards.</li>
+</ul></li>
+<li><strong>Negative Rewards</strong>:
+<ul>
+<li>Penalties are applied the car goes off the road. The agent is also penalized with a reward of -0.1 every frame to encourage it to do something and explore the environment</li>
+<li>Episodes terminate early if the car stays off of the road for too long, resulting in a large negative reward and causing the episode to end.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Transition Dynamics</strong> <span class="math inline">\((P)\)</span>: The transitions are deterministic and governed by the physics engine of the environment</p>
+<ul>
+<li>Given a state <span class="math inline">\((s_t)\)</span> and action <span class="math inline">\((a_t)\)</span>,the environment computes the next state <span class="math inline">\((s_{t+1})\)</span> based on;
+<ul>
+<li>The car’s velocity, orientation, and position</li>
+<li>Physical forces acting on the car such as collisions</li>
+</ul></li>
+<li><strong>Modeling Assumptions</strong>: The agent must implicitly learn these dynamics through trial and error as they are not explicitly provided to the agent</li>
+</ul></li>
+<li><p><strong>Discount Factor</strong>: <span class="math inline">\((\gamma)\)</span></p></li>
+</ol>
+<p>The discount factor determines how much importance is placed on future rewards compared to immediate ones</p>
+<ul>
+<li><strong>Typical Value</strong>: <span class="math inline">\(\gamma = 0.99\)</span></li>
+<li>This encourages the agent to focus on long term strategies such as planning ahead for sharp turns while still valuing immediate progress. This is just another hyperparameter that we can tune and the value for the discount factor ranges between <span class="math inline">\((0, 1)\)</span></li>
+</ul>
+<ol start="6" type="1">
+<li><strong>Objective</strong> The agents objective is to learn a policy <span class="math inline">\(\pi_\theta(a|s)\)</span> that maximizes the <strong>expected total discounted return</strong> over an episode: <span class="math display">\[
+J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^tr_t \right]
+\]</span></li>
+</ol>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\tau = (s_0, a_0, r_0, \dots, s_T, a_T, r_T)\)</span> is a trajectory of states, actions, and rewards.</li>
+<li><span class="math inline">\(T\)</span> is the length of an episode</li>
+</ul>
+<p>This requires the agent to:</p>
+<ol type="1">
+<li>Learn to stay on track and complete laps efficiently</li>
+<li>Maximize forward movement while minimizing penalties for off road driving or unnecessary braking</li>
+</ol>
+</section>
+<section id="implementing-the-solution-for-carracing" class="level2">
+<h2 class="anchored" data-anchor-id="implementing-the-solution-for-carracing">Implementing the Solution for CarRacing</h2>
+<p>Now that we have covered the background, we can start to delve into the solution as well as designing and training an agent to solve the CarRacing-v3 environment.</p>
+<p>First we will need to install the necessary libraries, all of them can be installed using the following commnd</p>
+<pre><code>pip install gymnasium gymnasium[box2d] stable-baselines3</code></pre>
+<p>we will be using the gymnasium library developed by OpenAI as it will provide is with our environment. we can load and test that everything is working with the following code:</p>
+<div id="8fc45ede" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CarRacing-v3"</span>, continuous<span class="op">=</span><span class="va">True</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>state, info <span class="op">=</span> env.reset()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>done <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="kw">not</span> done:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.time()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> env.action_space.sample()</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    next_state, reward, done, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> time.time() <span class="op">-</span> start <span class="op">&gt;</span> <span class="dv">1000</span>:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The above code should launch a pygame window containing the environment. Below is a screenshot of what this should look like:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images_quarto/env_startup.gif" class="img-fluid figure-img"></p>
+<figcaption>CarRacing-v3</figcaption>
+</figure>
+</div>
+<p>Currently there is no agent so the car is just choosing random actions from it’s action space. The next step is to train a parameterized policy via a neural network. To do this we will use stable_baselines3, this is a library that implements the frame for a lot of deep reinforcement learning algorithms such as PPO.</p>
+<p>Make sure we include all the necesssary libraries.</p>
+<div id="e9bfd72e" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> PPO</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.vec_env <span class="im">import</span> VecTransposeImage, DummyVecEnv, SubprocVecEnv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then need to define our environments, to make sure we are efficiently exploring the environment we can run multiple environments in parallel and have the policy use all of the trajectories from each environment in our calculations. The more environments we add the better the agent should perform, but we have to be careful not to allocate too many as it could overload the cpu.</p>
+<div id="3431ca26" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_env():</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _init():</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> gym.make(<span class="st">"CarRacing-v3"</span>, continuous<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _init</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>num_envs <span class="op">=</span> <span class="dv">4</span>  <span class="co"># This can be tuned based on your cpu</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> SubprocVecEnv([make_env() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_envs)])</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> VecTransposeImage(env)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the above cell, <code>SubProcVecEnv()</code> is used to parallelize the environments. This allows the agent to collect experiences (states, actions, rewards) from multiple environments simultaneously.</p>
+<p><code>VecTransposeImage()</code> is used to transpose the image fata to ensure that the RGB channels are last in the shape of the matrix. This is because the stable_baselines library expects the data to be in this format, so this function is just being used to ensure that we follow that format.</p>
+<p>Next we can try to learn the policy using PPO.</p>
+<div id="e128d102" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>total_timesteps <span class="op">=</span> <span class="dv">1_000_000</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">2048</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> PPO(</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    policy<span class="op">=</span><span class="st">"CnnPolicy"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    env<span class="op">=</span>env,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    device<span class="op">=</span><span class="st">"cuda"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    learning_rate<span class="op">=</span><span class="fl">3e-4</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    n_steps<span class="op">=</span>n_steps,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    n_epochs<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.99</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    gae_lambda<span class="op">=</span><span class="fl">0.95</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    clip_range<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    ent_coef<span class="op">=</span><span class="fl">0.01</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>model.learn(total_timesteps<span class="op">=</span>total_timesteps)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>model.save(<span class="st">"ppo_carracing_gpu_4envs_attempt2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The above code is pretty self explanatory, and since we covered the mathematical background for PPO, we should have a good understanding of what each of these paramters are doing. <code>model.learn(total_timesteps)</code> just invokes the training loop for the agent, and <code>model.save()</code> just saves the weights to disk.</p>
+<p>Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent.</p>
+<p>ADD GIF OF TRAINED AGENT AFTER TRAINING IS DONE</p>
+<!-- Thanks to stable_baselines3, training the agent is actually quite simple. Although we did not need the mathematical background, understanding it will give us a much better understanding of what is going on and what each of these parameters mean. As a refresher, here is an explanation of each of the parameters: -->
+<!-- should I do this? -->
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

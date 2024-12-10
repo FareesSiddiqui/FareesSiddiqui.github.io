@@ -224,11 +224,14 @@ $$
 a(s) = argmax_a \ Q_\theta(s,a)
 $$
 
+----
+
 # Solving CarRacing-v3 using Proximal Policy Optimization (PPO)
 
 What is PPO?
 
 Proximal Policy Optimization (PPO) is a reinforcement learning algorithm that belongs to the family of policy gradient methods, where the agent directly learns a parameterized policy $\pi_\theta(a|s)$ to maximize the cumulative reward in a given environment.
+The policy is usually parameterized via a nerual network.
 
 PPO improves upon older policy gradient methods by addressing two key challenges:
 
@@ -366,3 +369,102 @@ This requires the agent to:
 
 1. Learn to stay on track and complete laps efficiently
 2. Maximize forward movement while minimizing penalties for off road driving or unnecessary braking
+
+
+## Implementing the Solution for CarRacing
+
+Now that we have covered the background, we can start to delve into the solution as well as designing and training an agent to solve the CarRacing-v3 environment.
+
+First we will need to install the necessary libraries, all of them can be installed using the following commnd 
+
+	pip install gymnasium gymnasium[box2d] stable-baselines3
+
+we will be using the gymnasium library developed by OpenAI as it will provide is with our environment. we can load and test that everything is working with the following code:
+
+```{python}
+import gymnasium as gym
+import time
+
+env = gym.make("CarRacing-v3", continuous=True, render_mode="human")
+
+state, info = env.reset()
+done = False
+
+while not done:
+	start = time.time()
+	action = env.action_space.sample()
+	next_state, reward, done, truncated, info = env.step(action)
+
+	if time.time() - start > 1000:
+		break
+
+env.close()
+```
+
+The above code should launch a pygame window containing the environment. Below is a screenshot of what this should look like:
+
+![CarRacing-v3](images_quarto/env_startup.gif)
+
+Currently there is no agent so the car is just choosing random actions from it's action space. The next step is to train a parameterized policy via a neural network. To do this we will use stable_baselines3, this is a library that implements the frame for a lot of deep reinforcement learning algorithms such as PPO.
+
+Make sure we include all the necesssary libraries.
+
+```{python}
+import time
+import gymnasium as gym
+from stable_baselines3 import PPO
+from stable_baselines3.common.vec_env import VecTransposeImage, DummyVecEnv, SubprocVecEnv
+```
+
+We then need to define our environments, to make sure we are efficiently exploring the environment we can run multiple environments in parallel and have the policy use all of the trajectories from each environment in our calculations. The more environments we add the better the agent should perform, but we have to be careful not to allocate too many as it could overload the cpu.
+
+```{python}
+def make_env():
+    def _init():
+        return gym.make("CarRacing-v3", continuous=True)
+    return _init
+
+num_envs = 4  # This can be tuned based on your cpu
+env = SubprocVecEnv([make_env() for _ in range(num_envs)])
+env = VecTransposeImage(env)
+```
+
+In the above cell, `SubProcVecEnv()` is used to parallelize the environments. This allows the agent to collect experiences (states, actions, rewards) from multiple environments simultaneously.
+
+`VecTransposeImage()` is used to transpose the image fata to ensure that the RGB channels are last in the shape of the matrix. This is because the stable_baselines library expects the data to be in this format, so this function is just being used to ensure that we follow that format.
+
+Next we can try to learn the policy using PPO.
+
+```{python}
+total_timesteps = 1_000_000
+n_steps = 2048
+
+model = PPO(
+    policy="CnnPolicy",
+    env=env,
+    device="cuda",
+    verbose=1,
+    learning_rate=3e-4,
+    n_steps=n_steps,
+    batch_size=64,
+    n_epochs=10,
+    gamma=0.99,
+    gae_lambda=0.95,
+    clip_range=0.3,
+    ent_coef=0.01
+)
+
+model.learn(total_timesteps=total_timesteps)
+model.save("ppo_carracing_gpu_4envs_attempt2")
+```
+
+The above code is pretty self explanatory, and since we covered the mathematical background for PPO, we should have a good understanding of what each of these paramters are doing.
+`model.learn(total_timesteps)` just invokes the training loop for the agent, and `model.save()` just saves the weights to disk.
+
+Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent.
+
+ADD GIF OF TRAINED AGENT AFTER TRAINING IS DONE
+
+<!-- Thanks to stable_baselines3, training the agent is actually quite simple. Although we did not need the mathematical background, understanding it will give us a much better understanding of what is going on and what each of these parameters mean. As a refresher, here is an explanation of each of the parameters: -->
+
+<!-- should I do this? -->
