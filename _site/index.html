@@ -521,7 +521,7 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 <p>First we will need to install the necessary libraries, all of them can be installed using the following commnd</p>
 <pre><code>pip install gymnasium gymnasium[box2d] stable-baselines3</code></pre>
 <p>we will be using the gymnasium library developed by OpenAI as it will provide is with our environment. we can load and test that everything is working with the following code:</p>
-<div id="1f6c5f3e" class="cell" data-execution_count="1">
+<div id="864823f3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -549,14 +549,14 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 </div>
 <p>Currently there is no agent so the car is just choosing random actions from it’s action space. The next step is to train a parameterized policy via a neural network. To do this we will use stable_baselines3, this is a library that implements the frame for a lot of deep reinforcement learning algorithms such as PPO.</p>
 <p>Make sure we include all the necesssary libraries.</p>
-<div id="0959c9b2" class="cell" data-execution_count="2">
+<div id="f058bdff" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> PPO</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.vec_env <span class="im">import</span> VecTransposeImage, DummyVecEnv, SubprocVecEnv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We then need to define our environments, to make sure we are efficiently exploring the environment we can run multiple environments in parallel and have the policy use all of the trajectories from each environment in our calculations. The more environments we add the better the agent should perform, but we have to be careful not to allocate too many as it could overload the cpu.</p>
-<div id="73f760d4" class="cell" data-execution_count="3">
+<div id="a835ae92" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_env():</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _init():</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> gym.make(<span class="st">"CarRacing-v3"</span>, continuous<span class="op">=</span><span class="va">True</span>)</span>
@@ -569,7 +569,7 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 <p>In the above cell, <code>SubProcVecEnv()</code> is used to parallelize the environments. This allows the agent to collect experiences (states, actions, rewards) from multiple environments simultaneously.</p>
 <p><code>VecTransposeImage()</code> is used to transpose the image fata to ensure that the RGB channels are last in the shape of the matrix. This is because the stable_baselines library expects the data to be in this format, so this function is just being used to ensure that we follow that format.</p>
 <p>Next we can try to learn the policy using PPO.</p>
-<div id="60aada81" class="cell" data-execution_count="4">
+<div id="6d6f07ba" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>total_timesteps <span class="op">=</span> <span class="dv">1_000_000</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">2048</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -592,8 +592,46 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>model.save(<span class="st">"ppo_carracing_gpu_4envs_attempt2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The above code is pretty self explanatory, and since we covered the mathematical background for PPO, we should have a good understanding of what each of these paramters are doing. <code>model.learn(total_timesteps)</code> just invokes the training loop for the agent, and <code>model.save()</code> just saves the weights to disk.</p>
-<p>Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent.</p>
-<p>ADD GIF OF TRAINED AGENT AFTER TRAINING IS DONE</p>
+<p>Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent. To view our new trained agent in action, we can load the trained policy and see how an agent performs following said policy. Below is the code for that:</p>
+<div id="99687399" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> PPO</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> PPO.load(<span class="st">"ppo_carracing_gpu"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CarRacing-v3"</span>, continuous<span class="op">=</span><span class="va">True</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>obs, info <span class="op">=</span> env.reset()</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>):</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Predict the action using the trained model</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    action, _states <span class="op">=</span> model.predict(obs)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Take a step in the environment using the chosen action</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    obs, reward, done, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Render the environment to visualize the agent driving</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    env.render()</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If the episode is over (either done or truncated), reset the environment</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> done <span class="kw">or</span> truncated:</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        obs, info <span class="op">=</span> env.reset()</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Below are my results using the agent I trained with this method.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images_quarto/trained.gif" class="img-fluid figure-img"></p>
+<figcaption>Trained Policy</figcaption>
+</figure>
+</div>
+<p>NEEL I AM RE TRAINING BECUASE I FUCKED SOMETHING UP SO I NEED TO RE GEN THE VALUES TO GET MY GRAPS, BUT THERE WILL BE REWARD GRAPHS BELOW THIS. I HAVE AN EXAMPLE GRAPH BELOW</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images_quarto/output.png" class="img-fluid figure-img"></p>
+<figcaption>figure1</figcaption>
+</figure>
+</div>
 <!-- Thanks to stable_baselines3, training the agent is actually quite simple. Although we did not need the mathematical background, understanding it will give us a much better understanding of what is going on and what each of these parameters mean. As a refresher, here is an explanation of each of the parameters: -->
 <!-- should I do this? -->
 

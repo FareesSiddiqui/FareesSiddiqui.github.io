@@ -490,9 +490,11 @@ env.close()
 ```
 
 Below are my results using the agent I trained with this method.
+
 ![Trained Policy](images_quarto/trained.gif)
 
 NEEL I AM RE TRAINING BECUASE I FUCKED SOMETHING UP SO I NEED TO RE GEN THE VALUES TO GET MY GRAPS, BUT THERE WILL BE REWARD GRAPHS BELOW THIS. I HAVE AN EXAMPLE GRAPH BELOW
+
 ![figure1](images_quarto/output.png)
 
 
