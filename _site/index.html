@@ -521,7 +521,7 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 <p>First we will need to install the necessary libraries, all of them can be installed using the following commnd</p>
 <pre><code>pip install gymnasium gymnasium[box2d] stable-baselines3</code></pre>
 <p>we will be using the gymnasium library developed by OpenAI as it will provide is with our environment. we can load and test that everything is working with the following code:</p>
-<div id="8fc45ede" class="cell" data-execution_count="1">
+<div id="1f6c5f3e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -549,14 +549,14 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 </div>
 <p>Currently there is no agent so the car is just choosing random actions from it’s action space. The next step is to train a parameterized policy via a neural network. To do this we will use stable_baselines3, this is a library that implements the frame for a lot of deep reinforcement learning algorithms such as PPO.</p>
 <p>Make sure we include all the necesssary libraries.</p>
-<div id="e9bfd72e" class="cell" data-execution_count="2">
+<div id="0959c9b2" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> PPO</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.vec_env <span class="im">import</span> VecTransposeImage, DummyVecEnv, SubprocVecEnv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We then need to define our environments, to make sure we are efficiently exploring the environment we can run multiple environments in parallel and have the policy use all of the trajectories from each environment in our calculations. The more environments we add the better the agent should perform, but we have to be careful not to allocate too many as it could overload the cpu.</p>
-<div id="3431ca26" class="cell" data-execution_count="3">
+<div id="73f760d4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_env():</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _init():</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> gym.make(<span class="st">"CarRacing-v3"</span>, continuous<span class="op">=</span><span class="va">True</span>)</span>
@@ -569,7 +569,7 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 <p>In the above cell, <code>SubProcVecEnv()</code> is used to parallelize the environments. This allows the agent to collect experiences (states, actions, rewards) from multiple environments simultaneously.</p>
 <p><code>VecTransposeImage()</code> is used to transpose the image fata to ensure that the RGB channels are last in the shape of the matrix. This is because the stable_baselines library expects the data to be in this format, so this function is just being used to ensure that we follow that format.</p>
 <p>Next we can try to learn the policy using PPO.</p>
-<div id="e128d102" class="cell" data-execution_count="4">
+<div id="60aada81" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>total_timesteps <span class="op">=</span> <span class="dv">1_000_000</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">2048</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>

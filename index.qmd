@@ -461,9 +461,41 @@ model.save("ppo_carracing_gpu_4envs_attempt2")
 The above code is pretty self explanatory, and since we covered the mathematical background for PPO, we should have a good understanding of what each of these paramters are doing.
 `model.learn(total_timesteps)` just invokes the training loop for the agent, and `model.save()` just saves the weights to disk.
 
-Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent.
+Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent. To view our new trained agent in action, we can load the trained policy and see how an agent performs following said policy. Below is the code for that:
 
-ADD GIF OF TRAINED AGENT AFTER TRAINING IS DONE
+```{python}
+import gymnasium as gym
+from stable_baselines3 import PPO
+
+model = PPO.load("ppo_carracing_gpu")
+
+env = gym.make("CarRacing-v3", continuous=True, render_mode="human")
+obs, info = env.reset()
+
+for _ in range(1000):
+    # Predict the action using the trained model
+    action, _states = model.predict(obs)
+    
+    # Take a step in the environment using the chosen action
+    obs, reward, done, truncated, info = env.step(action)
+    
+    # Render the environment to visualize the agent driving
+    env.render()
+    
+    # If the episode is over (either done or truncated), reset the environment
+    if done or truncated:
+        obs, info = env.reset()
+
+env.close()
+```
+
+Below are my results using the agent I trained with this method.
+![Trained Policy](images_quarto/trained.gif)
+
+NEEL I AM RE TRAINING BECUASE I FUCKED SOMETHING UP SO I NEED TO RE GEN THE VALUES TO GET MY GRAPS, BUT THERE WILL BE REWARD GRAPHS BELOW THIS. I HAVE AN EXAMPLE GRAPH BELOW
+![figure1](images_quarto/output.png)
+
+
 
 <!-- Thanks to stable_baselines3, training the agent is actually quite simple. Although we did not need the mathematical background, understanding it will give us a much better understanding of what is going on and what each of these parameters mean. As a refresher, here is an explanation of each of the parameters: -->
 
