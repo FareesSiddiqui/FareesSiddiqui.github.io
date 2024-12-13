@@ -521,7 +521,7 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 <p>First we will need to install the necessary libraries, all of them can be installed using the following commnd</p>
 <pre><code>pip install gymnasium gymnasium[box2d] stable-baselines3</code></pre>
 <p>we will be using the gymnasium library developed by OpenAI as it will provide is with our environment. we can load and test that everything is working with the following code:</p>
-<div id="864823f3" class="cell" data-execution_count="1">
+<div id="2438e08a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -549,14 +549,14 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 </div>
 <p>Currently there is no agent so the car is just choosing random actions from it’s action space. The next step is to train a parameterized policy via a neural network. To do this we will use stable_baselines3, this is a library that implements the frame for a lot of deep reinforcement learning algorithms such as PPO.</p>
 <p>Make sure we include all the necesssary libraries.</p>
-<div id="f058bdff" class="cell" data-execution_count="2">
+<div id="9201a1bc" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> PPO</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.vec_env <span class="im">import</span> VecTransposeImage, DummyVecEnv, SubprocVecEnv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We then need to define our environments, to make sure we are efficiently exploring the environment we can run multiple environments in parallel and have the policy use all of the trajectories from each environment in our calculations. The more environments we add the better the agent should perform, but we have to be careful not to allocate too many as it could overload the cpu.</p>
-<div id="a835ae92" class="cell" data-execution_count="3">
+<div id="24140aec" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_env():</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _init():</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> gym.make(<span class="st">"CarRacing-v3"</span>, continuous<span class="op">=</span><span class="va">True</span>)</span>
@@ -569,7 +569,7 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 <p>In the above cell, <code>SubProcVecEnv()</code> is used to parallelize the environments. This allows the agent to collect experiences (states, actions, rewards) from multiple environments simultaneously.</p>
 <p><code>VecTransposeImage()</code> is used to transpose the image fata to ensure that the RGB channels are last in the shape of the matrix. This is because the stable_baselines library expects the data to be in this format, so this function is just being used to ensure that we follow that format.</p>
 <p>Next we can try to learn the policy using PPO.</p>
-<div id="6d6f07ba" class="cell" data-execution_count="4">
+<div id="99f8c3e6" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>total_timesteps <span class="op">=</span> <span class="dv">1_000_000</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">2048</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -593,7 +593,7 @@ J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^{T} \gamma^t
 </div>
 <p>The above code is pretty self explanatory, and since we covered the mathematical background for PPO, we should have a good understanding of what each of these paramters are doing. <code>model.learn(total_timesteps)</code> just invokes the training loop for the agent, and <code>model.save()</code> just saves the weights to disk.</p>
 <p>Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent. To view our new trained agent in action, we can load the trained policy and see how an agent performs following said policy. Below is the code for that:</p>
-<div id="99687399" class="cell" data-execution_count="5">
+<div id="0a79aeda" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> PPO</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -730,7 +730,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/FareesSiddiqui\.github\.io\/");
+      var filterRegex = new RegExp('/' + window.location.host + '/');
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

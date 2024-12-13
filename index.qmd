@@ -411,9 +411,55 @@ Make sure we include all the necesssary libraries.
 
 ```{python}
 import time
+import os
+import json
+
+import matplotlib.pyplot as plt 
+import numpy as np
+
 import gymnasium as gym
+
 from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import VecTransposeImage, DummyVecEnv, SubprocVecEnv
+from stable_baselines3.common.vec_env import VecTransposeImage, SubprocVecEnv
+from stable_baselines3.common.callbacks import BaseCallback, EvalCallback
+from stable_baselines3.common import logger
+from stable_baselines3.common.logger import configure
+```
+
+Next we define a class that will be used for stopping training early, if the average reward obtained by the agent over an episode is over some threshold, in this case 900. This callback function is used by stablebaselines and is an optimization technique so we dont continue to try and train the policy if its already performing desirably.
+
+```{python}
+class EarlyStoppingCallback(BaseCallback):
+    def __init__(self, min_reward_threshold: float = 900, check_freq: int = 10000, verbose: int = 1):
+        super().__init__(verbose)
+        self.min_reward_threshold = min_reward_threshold
+        self.check_freq = check_freq
+        self.best_mean_reward = -np.inf
+
+    def _on_step(self) -> bool:
+        if self.num_timesteps % self.check_freq == 0:
+            if len(self.model.ep_info_buffer) > 0:
+                mean_reward = np.mean([ep_info['r'] for ep_info in self.model.ep_info_buffer])
+            else:
+                mean_reward = -np.inf
+            
+            if self.verbose > 0:
+                print(f"Current mean reward: {mean_reward}")
+            
+            if mean_reward > self.min_reward_threshold:
+                print(f"Stopping training - reached target reward of {mean_reward}")
+                return False  # Stop training
+            
+            if mean_reward > self.best_mean_reward:
+                self.best_mean_reward = mean_reward
+        
+        return True
+
+log_dir = "./ppo_logs/CarRacing-v3"
+os.makedirs(log_dir, exist_ok=True)
+data_log_path = os.path.join(log_dir, "training_metrics.json")
+custom_logger = configure(log_dir, ["stdout", "csv", "json"])
+
 ```
 
 We then need to define our environments, to make sure we are efficiently exploring the environment we can run multiple environments in parallel and have the policy use all of the trajectories from each environment in our calculations. The more environments we add the better the agent should perform, but we have to be careful not to allocate too many as it could overload the cpu.
@@ -436,7 +482,7 @@ In the above cell, `SubProcVecEnv()` is used to parallelize the environments. Th
 Next we can try to learn the policy using PPO.
 
 ```{python}
-total_timesteps = 1_000_000
+total_timesteps = 2_000_000
 n_steps = 2048
 
 model = PPO(
@@ -450,16 +496,33 @@ model = PPO(
     n_epochs=10,
     gamma=0.99,
     gae_lambda=0.95,
-    clip_range=0.3,
-    ent_coef=0.01
+    clip_range=0.2,
+    ent_coef=0.01,
+)
+model.set_logger(custom_logger)
+
+early_stopping_callback = EarlyStoppingCallback(
+    min_reward_threshold=600, 
+    check_freq=10000  
 )
 
-model.learn(total_timesteps=total_timesteps)
-model.save("ppo_carracing_gpu_4envs_attempt2")
+eval_callback = EvalCallback(
+    env, 
+    best_model_save_path='./ppo_logs/',
+    log_path='./ppo_logs/',
+    eval_freq=10000,
+    deterministic=True,
+    render=False
+)
+
+model.learn(total_timesteps=total_timesteps, progress_bar=True, callback=[early_stopping_callback, eval_callback])
+model.save("ppo_carracing_final_model")
 ```
 
 The above code is pretty self explanatory, and since we covered the mathematical background for PPO, we should have a good understanding of what each of these paramters are doing.
 `model.learn(total_timesteps)` just invokes the training loop for the agent, and `model.save()` just saves the weights to disk.
+
+`early_stopping_callback()` is just the training optimization callback that I talked about earlier, and `eval_callback()` is used by the `stable_baselines3` library for logging the best performing policy. It goes through and the policy with the highest average reward is saved, if a new policy is found with a better reward, then the old policy is overwritten. It is also used to log the reward values per timestep and save them to the disk.
 
 Using this policy we should get a much better agent that is able to drive much better than the initial agent which was choosing random actions from its action space. Below are my results for the agent. To view our new trained agent in action, we can load the trained policy and see how an agent performs following said policy. Below is the code for that:
 
@@ -489,16 +552,28 @@ for _ in range(1000):
 env.close()
 ```
 
-Below are my results using the agent I trained with this method.
+
+### Results
 
 ![Trained Policy](images_quarto/trained.gif)
 
-NEEL I AM RE TRAINING BECUASE I FUCKED SOMETHING UP SO I NEED TO RE GEN THE VALUES TO GET MY GRAPS, BUT THERE WILL BE REWARD GRAPHS BELOW THIS. I HAVE AN EXAMPLE GRAPH BELOW
+As we can see from the clip above, we are definetely able to learn a policy which has some semblance of what the car racing problem is, and how to go about solving it. As we can see this policy is still not perfect.
 
-![figure1](images_quarto/output.png)
+![Average Reward over Time](images_quarto/output.png)
 
+Looking at the graph above we can see the average reward obtained by the agent following our policy at each timestep. The line represents the average reward, and the shaded area represents the standard deviation. As we can see from the graph, there seems to be quite a bit of deviation, but the algorithm is tending towards a policy which is able to optimize the average reward it gets. One other interesting thing we can notice from the graph, is that the policy which obtained the highest reward during training, was the policy at about timestep $0.6e6$ or $600'000$, this means that this was the best version of the policy during training, and this is why we saved the best policy in our model.
 
+![Loss Metrics](images_quarto/loss_metrics.png)
 
-<!-- Thanks to stable_baselines3, training the agent is actually quite simple. Although we did not need the mathematical background, understanding it will give us a much better understanding of what is going on and what each of these parameters mean. As a refresher, here is an explanation of each of the parameters: -->
+Finally, one other interesting thing to look at here is the loss values of the policy while training.
 
-<!-- should I do this? -->
+- `entropy_loss`
+  - This value starts relatively high and decreases steadily towards lower values, which indicates that the policy is becoming more deterministic as we train. This is expected for a converging PPO model, and if we let the model train for long enough we would probably see this value converge at some value.
+
+- `policy_gradient_loss`
+  - This value starts low but increases over time. This could indicate that the value function is struggling to accurately predict returns as training progresses.
+
+- `loss`
+  - This value remains close to zero, with negligible fluctuations throughout the training process. This suggests that the overall loss is being managed effectively, and that the value functions are indeed optimizing the policy, even if they are not converging very fast or efficiently.
+
+I believe that the discrepancies in the loss values can be explained by the training process being halted prematurely. I believe these somewhat weird values are caused by the policy being in some local minimum that it was not given enough time to find it's way out of. I believe that since the model is generalizing well, and clearly working well, we have just not trained it for long enough for all of the loss values to converge.
